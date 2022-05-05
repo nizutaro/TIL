@@ -1,0 +1,9 @@
+Sub find_col() '列検索
+    Dim i As Long
+    For i = 1 To Cells(1, Columns.count).End(xlToLeft).Column '１行目の1列目から最終列の取得
+        If Cells(1, i) = "name" Then  'もし１行目に"name"という列があったら
+            Cells(1, i).EntireColumn.Select '行全体を選択する
+            Exit For
+        End If
+    Next
+End Sub
