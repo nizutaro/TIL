@@ -7,3 +7,11 @@ Sub find_col() '列検索
         End If
     Next
 End Sub
+
+Public Function judgementZenkaku(ByVal p_value As String) As Boolean
+    judgementZenkaku = False
+    If Len(p_value) <> LenB(StrConv(p_value, vbFrmUnicode)) Then
+        MsgBox ("全角が含まれています")
+        judgementZenkaku = True
+    End If
+End Function
