@@ -1,17 +1,94 @@
+Option Explicit
+
+Sub nameChange()
+    Dim dataSh As Worksheet
+    Dim changeMasterSh As Worksheet
+
+    Set dataSh = Sheets("Sheet1")
+    Set changeMasterSh = Sheets("Sheet2")
+    Dim NameCol As Long
+    With dataSh
+    
+        For NameCol = 1 To Cells(1, Columns.count).End(xlToLeft).Column '１行目の1列目から最終列の取得
+             If Cells(1, NameCol) = "name" Then  'もし１行目に"name"という列があったら
+                Dim r As Variant
+                
+                Set r = .Range(.Cells(2, NameCol), .Cells(Rows.count, NameCol).End(xlUp)) '2行目から最終行まで選択
+                
+                
+                dataSh.Activate  'dataShに切り替える
+                r.Select
+                
+                Dim hankakuRange As Range '全角チェック
+                For Each hankakuRange In Selection
+                    hankakuRange.value = StrConv(hankakuRange.value, vbNarrow)
+                    Call judgementZenkaku(hankakuRange.value, hankakuRange)
+                     
+                Next
+                
+                Dim i As Long
+                
+                 
+                 '置換する
+                
+                For i = 2 To changeMasterSh.Cells(Rows.count, 1).End(xlUp).Row
+                    r.Replace what:=StrConv(changeMasterSh.Cells(i, 1), vbNarrow), replacement:=changeMasterSh.Cells(i, 2), lookAt:=xlPart, MatchCase:=False
+                Next
+                
+                
+            End If
+        Next
+    End With
+End Sub
+    
 Sub find_col() '列検索
-    Dim i As Long
-    For i = 1 To Cells(1, Columns.count).End(xlToLeft).Column '１行目の1列目から最終列の取得
-        If Cells(1, i) = "name" Then  'もし１行目に"name"という列があったら
-            Cells(1, i).EntireColumn.Select '行全体を選択する
-            Exit For
-        End If
-    Next
+    'worksheetを指定する
+    Dim dataSh As Worksheet
+    Dim changeMasterSh As Worksheet
+    Set dataSh = Sheets("Sheet1")
+    Set changeMasterSh = Sheets("Sheet2")
+    Dim NameCol As Long
+    With dataSh
+        For NameCol = 1 To Cells(1, Columns.count).End(xlToLeft).Column '１行目の1列目から最終列の取得
+            If Cells(1, NameCol) = "name" Then  'もし１行目に"name"という列があったら
+                Range(Cells(2, NameCol), Cells(Rows.count, NameCol).End(xlUp)).Select '2行目から最終行まで選択
+                '全角を半角にする
+                Dim r As Range
+                For Each r In Selection
+                    r.value = StrConv(r.value, vbNarrow)
+                    If judgementZenkaku(r.value, r) Then
+                        Debug.Print r
+                    End If
+                Next
+                
+            End If
+        Next
+    End With
 End Sub
 
-Public Function judgementZenkaku(ByVal p_value As String) As Boolean
-    judgementZenkaku = False
-    If Len(p_value) <> LenB(StrConv(p_value, vbFrmUnicode)) Then
-        MsgBox ("全角が含まれています")
-        judgementZenkaku = True
+Public Function judgementZenkaku(ByVal kanjiCheck As String, kanjiCell As Range) As Boolean
+
+    If Len(kanjiCheck) <> LenB(StrConv(kanjiCheck, vbFromUnicode)) Then
+        kanjiCell.Interior.Color = RGB(255, 0, 0)
+        
+    ElseIf Len(kanjiCheck) > 15 Then
+        kanjiCell.Interior.Color = vbYellow
+    Else
+        kanjiCell.ClearFormats
     End If
 End Function
+
+
+Sub kankyoIzon()
+    Dim txt As String
+    txt = Cells(2, 2).Text
+    Debug.Print txt
+    
+    Dim i As Long, c As String
+    
+    For i = 1 To Len(txt)
+        c = Mid(txt, i, 1)
+        Debug.Print c & "文字コード" & Hex(AscW(c))
+    Next
+    
+End Sub
