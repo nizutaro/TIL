@@ -12,32 +12,26 @@ Sub nameChange()
         For NameCol = 1 To Cells(1, Columns.count).End(xlToLeft).Column '１行目の1列目から最終列の取得
              If Cells(1, NameCol) = "name" Then  'もし１行目に"name"という列があったら
                 Dim r As Variant
-                
                 Set r = .Range(.Cells(2, NameCol), .Cells(Rows.count, NameCol).End(xlUp)) '2行目から最終行まで選択
-                
-                
                 dataSh.Activate  'dataShに切り替える
+                If .Cells(2, NameCol).value = "" Then Exit Sub
                 r.Select
-                
                 Dim hankakuRange As Range '全角チェック
                 For Each hankakuRange In Selection
-                    hankakuRange.value = StrConv(hankakuRange.value, vbNarrow)
-                    Call judgementZenkaku(hankakuRange.value, hankakuRange)
-                     
+                    hankakuRange.value = StrConv(StrConv(hankakuRange.value, vbKatakana), vbNarrow)
                 Next
-                
                 Dim i As Long
-                
-                 
                  '置換する
-                
                 For i = 2 To changeMasterSh.Cells(Rows.count, 1).End(xlUp).Row
-                    r.Replace what:=StrConv(changeMasterSh.Cells(i, 1), vbNarrow), replacement:=changeMasterSh.Cells(i, 2), lookAt:=xlPart, MatchCase:=False
+                    r.Replace what:=StrConv(StrConv(changeMasterSh.Cells(i, 1), vbKatakana), vbNarrow), replacement:=changeMasterSh.Cells(i, 2), lookAt:=xlPart, MatchCase:=False
                 Next
-                
-                
             End If
         Next
+            
+        For Each hankakuRange In Selection
+            Call judgementZenkaku(hankakuRange.value, hankakuRange)
+         Next
+         
     End With
 End Sub
     
@@ -60,14 +54,12 @@ Sub find_col() '列検索
                         Debug.Print r
                     End If
                 Next
-                
             End If
         Next
     End With
 End Sub
 
 Public Function judgementZenkaku(ByVal kanjiCheck As String, kanjiCell As Range) As Boolean
-
     If Len(kanjiCheck) <> LenB(StrConv(kanjiCheck, vbFromUnicode)) Then
         kanjiCell.Interior.Color = RGB(255, 0, 0)
         
@@ -78,17 +70,13 @@ Public Function judgementZenkaku(ByVal kanjiCheck As String, kanjiCell As Range)
     End If
 End Function
 
-
 Sub kankyoIzon()
     Dim txt As String
     txt = Cells(2, 2).Text
     Debug.Print txt
-    
     Dim i As Long, c As String
-    
     For i = 1 To Len(txt)
         c = Mid(txt, i, 1)
         Debug.Print c & "文字コード" & Hex(AscW(c))
     Next
-    
 End Sub
