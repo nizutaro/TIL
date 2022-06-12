@@ -1,0 +1,18 @@
+Sub 会社名置換()
+  
+    Dim replace_col As Range
+    Set replace_col = Range("B:B")  'ここに列名
+    
+    Dim company_cell As Range
+    Dim company_name As String
+
+    Set company_cell = Range("B1")
+    company_name = "会社名"
+    
+    If company_cell = company_name Then
+        replace_col.Replace what:="　", replacement:="", LookAt:=xlPart, MatchCase:=True
+        replace_col.Replace what:=" ", replacement:="", LookAt:=xlPart, MatchCase:=True
+    Else
+        MsgBox ("が違います")
+    End If
+ End Sub
