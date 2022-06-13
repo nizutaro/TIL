@@ -1,0 +1,43 @@
+Sub maxNo()
+    Dim i As Long
+    Dim t As Double
+    t = Timer
+    MsgBox WorksheetFunction.max(Range("B:B"))
+    Debug.Print (Timer - t)
+End Sub
+
+
+Sub maxifNo()
+    Dim i As Long
+    Dim MyArray As Variant
+    Dim LeftArray As Variant
+    
+    Dim t As Double
+    t = Timer
+    For i = 2 To Cells(Rows.Count, 2).End(xlUp).Row
+        MyArray = Cells(i, 2)
+        LeftArray = Left(Cells(i, 2), 1)
+    Next
+    Debug.Print (Timer - t)
+    MsgBox WorksheetFunction.MaxIfs(MyArray, LeftArray, "8")
+End Sub
+
+Sub ifNo()
+   Dim i As Long
+    Dim MyArray As Variant
+    Dim LeftArray As Variant
+    
+    Dim t As Double
+    Dim cnt As Long
+    t = Timer
+    cnt = 1
+    For i = 2 To Cells(Rows.Count, 2).End(xlUp).Row
+           
+        If Left(Cells(i, 2), 1) = 8 Then
+            cnt = Cells(i, 2)
+        End If
+    Next
+    MsgBox cnt + 1
+    
+    Debug.Print (Timer - t)
+End Sub
